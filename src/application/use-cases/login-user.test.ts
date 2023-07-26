@@ -1,4 +1,4 @@
-import { UserRepositorySpy } from '../../infra/db/user-repository-spy';
+import { UserRepositorySpy } from '../../mocks/user-repository-spy';
 import { PasswordEncrypterSpy } from '../../mocks/password-encrypter-spy';
 import { TokenManagerSpy } from '../../mocks/token-manager-spy';
 import { LoginUser } from './login-user';

@@ -1,5 +1,5 @@
-import { TUser } from '../../domain/entity/user';
-import { IUserRepository } from '../../domain/interface/user-respository-interface';
+import { TUser } from '../domain/entity/user';
+import { IUserRepository } from '../domain/interface/user-respository-interface';
 import crypto from 'crypto';
 
 export class UserRepositorySpy implements IUserRepository {
