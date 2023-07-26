@@ -45,4 +45,23 @@ describe('Login User', () => {
       await sut.login(username, password);
     }).rejects.toThrow(InvalidCredentialsError);
   });
+
+  test('login method should call with correct username and password, and return a token', async () => {
+    const { sut, userRepoSpy, passwordEncrypterSpy, tokenManagerSpy } =
+      makeSut();
+    const username = 'valid_username';
+    const password = 'valid_password';
+    userRepoSpy.repo.push({
+      id: 'any_id',
+      username: 'valid_username',
+      hashedPassword: 'any_hashed_password',
+      createdAt: new Date(),
+    });
+
+    const token = await sut.login(username, password);
+
+    expect(username).toBe(userRepoSpy.repo[0].username);
+    expect(password).toBe(passwordEncrypterSpy.password);
+    expect(token).toBe(tokenManagerSpy.token);
+  });
 });
