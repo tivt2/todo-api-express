@@ -1,10 +1,7 @@
-import connectDB from '../db/mongo/db';
-import { UserRepository } from '../db/user-repository';
+import app from './server';
 
-const userRepo = new UserRepository();
+const PORT = process.env.PORT || 3000;
 
-(async () => {
-  connectDB();
-  const user = await userRepo.getUserByUsername('admin');
-  console.log(user);
-})();
+app.listen(PORT, () => {
+  console.log(`Currently listening to port: http://localhost:${PORT}`);
+});

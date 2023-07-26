@@ -19,11 +19,11 @@ export class UserRepositorySpy implements IUserRepository {
     return new Promise((resolve) => resolve(user));
   }
 
-  async getUserByUsername(username: string): Promise<TUser | undefined> {
+  async getUserByUsername(username: string): Promise<TUser | null> {
     this.username = username;
     const user = this.repo.find((user) => user.username === username);
     return new Promise((resolve) => {
-      resolve(user);
+      resolve(user ? user : null);
     });
   }
 }
