@@ -7,6 +7,7 @@ import { PasswordEncrypter } from '../../utils/password-encrypter';
 import { LoginUser } from '../../../application/use-cases/login-user';
 import { RegisterNewUser } from '../../../application/use-cases/register-new-user';
 import { DuplicatedUserError } from '../../errors/duplicated-user-error';
+import { UserNotFoundError } from '../../errors/user-not-found-error';
 
 export const loginRoute =
   (userInputValidator: IUserInputValidator) =>
@@ -36,7 +37,10 @@ export const loginRoute =
       res.status(200);
       res.json({ token });
     } catch (err) {
-      if (err instanceof InvalidCredentialsError) {
+      if (
+        err instanceof InvalidCredentialsError ||
+        err instanceof UserNotFoundError
+      ) {
         res.status(401);
         res.json({ message: 'Invalid credentials' });
         return;
