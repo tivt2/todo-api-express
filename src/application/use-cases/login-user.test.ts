@@ -3,6 +3,7 @@ import { PasswordEncrypterSpy } from '../../mocks/password-encrypter-spy';
 import { TokenManagerSpy } from '../../mocks/token-manager-spy';
 import { LoginUser } from './login-user';
 import { InvalidCredentialsError } from '../errors/invalid-credential-error';
+import { UserNotFoundError } from '../../infra/errors/user-not-found-error';
 
 function makeSut() {
   const userRepoSpy = new UserRepositorySpy();
@@ -26,7 +27,7 @@ describe('Login User', () => {
 
     await expect(async () => {
       await sut.login(username, password);
-    }).rejects.toThrow(InvalidCredentialsError);
+    }).rejects.toThrow(UserNotFoundError);
   });
 
   test('login method should call with invalid password and throw error', async () => {

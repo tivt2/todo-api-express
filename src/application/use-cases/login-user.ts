@@ -12,9 +12,6 @@ export class LoginUser {
 
   async login(username: string, password: string): Promise<string> {
     const user = await this.userRepo.getUserByUsername(username);
-    if (!user) {
-      throw new InvalidCredentialsError();
-    }
 
     const matchPassword = await this.passwordEncrypter.compare(
       password,

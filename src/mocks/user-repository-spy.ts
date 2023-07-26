@@ -1,6 +1,7 @@
 import { TUser } from '../domain/entity/user';
 import { IUserRepository } from '../domain/interface/user-respository-interface';
 import crypto from 'crypto';
+import { UserNotFoundError } from '../infra/errors/user-not-found-error';
 
 export class UserRepositorySpy implements IUserRepository {
   repo: TUser[] = [];
@@ -19,11 +20,12 @@ export class UserRepositorySpy implements IUserRepository {
     return new Promise((resolve) => resolve(user));
   }
 
-  async getUserByUsername(username: string): Promise<TUser | null> {
+  async getUserByUsername(username: string): Promise<TUser> {
     this.username = username;
     const user = this.repo.find((user) => user.username === username);
-    return new Promise((resolve) => {
-      resolve(user ? user : null);
-    });
+    if (!user) {
+      throw new UserNotFoundError();
+    }
+    return user;
   }
 }
