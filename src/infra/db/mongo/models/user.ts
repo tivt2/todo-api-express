@@ -1,9 +1,10 @@
-import mongoose, { Schema } from 'mongoose';
+import { Schema, model } from 'mongoose';
 import { v4 as uuid } from 'uuid';
+import { TUser } from '../../../../domain/entity/user';
 
-const userSchema = new mongoose.Schema({
+const userSchema = new Schema<TUser>({
   id: {
-    type: Schema.Types.UUID,
+    type: String,
     default: () => uuid(),
   },
   username: {
@@ -20,4 +21,4 @@ const userSchema = new mongoose.Schema({
   },
 });
 
-export default mongoose.model('Users', userSchema);
+export default model('Users', userSchema);
