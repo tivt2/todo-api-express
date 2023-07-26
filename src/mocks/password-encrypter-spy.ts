@@ -13,7 +13,7 @@ export class PasswordEncrypterSpy implements IPasswordEncrypter {
   }
 
   async compare(password: string, hashedPassword: string): Promise<boolean> {
-    const matchPassword = await bcrypt.compare(password, hashedPassword);
-    return matchPassword;
+    (this.password = password), (this.hashedPassword = hashedPassword);
+    return true;
   }
 }

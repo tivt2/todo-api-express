@@ -4,6 +4,7 @@ import crypto from 'crypto';
 
 export class UserRepositorySpy implements IUserRepository {
   repo: TUser[] = [];
+  username = '';
 
   async insert(username: string, hashedPassword: string): Promise<TUser> {
     const user = {
@@ -18,7 +19,8 @@ export class UserRepositorySpy implements IUserRepository {
     return new Promise((resolve) => resolve(user));
   }
 
-  async getUser(username: string): Promise<TUser | undefined> {
+  async getUserByUsername(username: string): Promise<TUser | undefined> {
+    this.username = username;
     const user = this.repo.find((user) => user.username === username);
     return new Promise((resolve) => {
       resolve(user);

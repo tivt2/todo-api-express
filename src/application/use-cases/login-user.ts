@@ -10,8 +10,8 @@ export class LoginUser {
     private passwordEncrypter: IPasswordEncrypter,
   ) {}
 
-  async login(username: string, password: string) {
-    const user = await this.userRepo.getUser(username);
+  async login(username: string, password: string): Promise<string> {
+    const user = await this.userRepo.getUserByUsername(username);
     if (!user) {
       throw new InvalidCredentialsError();
     }
