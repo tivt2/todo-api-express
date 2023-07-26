@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 export class PasswordEncrypterSpy implements IPasswordEncrypter {
   password: string = '';
   hashedPassword: string = '';
+  isValid = true;
 
   async hashPassword(password: string): Promise<string> {
     this.password = password;
@@ -13,7 +14,8 @@ export class PasswordEncrypterSpy implements IPasswordEncrypter {
   }
 
   async compare(password: string, hashedPassword: string): Promise<boolean> {
-    (this.password = password), (this.hashedPassword = hashedPassword);
-    return true;
+    this.password = password;
+    this.hashedPassword = hashedPassword;
+    return this.isValid;
   }
 }

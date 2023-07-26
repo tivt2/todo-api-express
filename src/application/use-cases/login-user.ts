@@ -16,7 +16,7 @@ export class LoginUser {
       throw new InvalidCredentialsError();
     }
 
-    const matchPassword = this.passwordEncrypter.compare(
+    const matchPassword = await this.passwordEncrypter.compare(
       password,
       user.hashedPassword,
     );

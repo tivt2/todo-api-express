@@ -28,4 +28,21 @@ describe('Login User', () => {
       await sut.login(username, password);
     }).rejects.toThrow(InvalidCredentialsError);
   });
+
+  test('login method should call with invalid password and throw error', async () => {
+    const { sut, userRepoSpy, passwordEncrypterSpy } = makeSut();
+    const username = 'valid_username';
+    const password = 'invalid_password';
+    userRepoSpy.repo.push({
+      id: 'any_id',
+      username: 'valid_username',
+      hashedPassword: 'any_hashed_password',
+      createdAt: new Date(),
+    });
+    passwordEncrypterSpy.isValid = false;
+
+    await expect(async () => {
+      await sut.login(username, password);
+    }).rejects.toThrow(InvalidCredentialsError);
+  });
 });
