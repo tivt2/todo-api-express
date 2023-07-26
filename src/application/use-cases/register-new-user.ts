@@ -1,11 +1,17 @@
 import { TUser } from '../../domain/entity/user';
+import { IPasswordEncrypter } from '../../domain/interface/password-encrypter-interface';
 import { IUserRepository } from '../../domain/interface/user-respository-interface';
 
 export class RegisterNewUser {
-  constructor(private userRepo: IUserRepository) {}
+  constructor(
+    private userRepo: IUserRepository,
+    private passwordEncrypter: IPasswordEncrypter,
+  ) {}
 
   async register(username: string, password: string): Promise<TUser> {
-    const user = await this.userRepo.insert(username, password);
+    const hashedPassword = await this.passwordEncrypter.hashPassword(password);
+
+    const user = await this.userRepo.insert(username, hashedPassword);
     return user;
   }
 }

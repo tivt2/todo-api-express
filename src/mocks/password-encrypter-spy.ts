@@ -1,9 +1,14 @@
-import { IPasswordEncrypter } from '../../domain/interface/password-encrypter-interface';
+import { IPasswordEncrypter } from '../domain/interface/password-encrypter-interface';
 import bcrypt from 'bcrypt';
 
-export class PasswordEncrypter implements IPasswordEncrypter {
+export class PasswordEncrypterSpy implements IPasswordEncrypter {
+  password: string = '';
+  hashedPassword: string = '';
+
   async hashPassword(password: string): Promise<string> {
+    this.password = password;
     const hashedPassword = await bcrypt.hash(password, 5);
+    this.hashedPassword = hashedPassword;
     return hashedPassword;
   }
 
