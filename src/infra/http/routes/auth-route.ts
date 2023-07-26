@@ -6,6 +6,7 @@ import { TokenManager } from '../../utils/token-manager';
 import { PasswordEncrypter } from '../../utils/password-encrypter';
 import { LoginUser } from '../../../application/use-cases/login-user';
 import { RegisterNewUser } from '../../../application/use-cases/register-new-user';
+import { DuplicatedUserError } from '../../errors/duplicated-user-error';
 
 export const loginRoute =
   (userInputValidator: IUserInputValidator) =>
@@ -62,7 +63,6 @@ export const registerRoute =
         });
         return;
       }
-      console.log('past valid');
 
       const userRepository = new UserRepository();
       const passwordEncrypter = new PasswordEncrypter();
@@ -70,14 +70,22 @@ export const registerRoute =
         userRepository,
         passwordEncrypter,
       );
-      console.log('past usecase creation');
 
       const user = await registerNewUser.register(username, password);
-      console.log('user register');
       res.status(200);
       res.json({ message: `Welcome ${user.username}, enjoy` });
       return res;
     } catch (err) {
+      if (
+        typeof err === 'object' &&
+        (err as DuplicatedUserError).code === 11000
+      ) {
+        res.status(409);
+        res.json({
+          message: 'User already exists',
+        });
+        return;
+      }
       res.status(500);
       res.json({
         message: 'Something wrong happen, please try again in a moment',
