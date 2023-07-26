@@ -4,7 +4,7 @@ import { InvalidTokenError } from '../../utils/error/invalid-token-error';
 
 export const authorization =
   (tokenManager: ITokenManager) =>
-  (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const bearer = req.headers.authorization;
 
     if (!bearer) {
@@ -21,7 +21,7 @@ export const authorization =
     }
 
     try {
-      const userId = tokenManager.validate(token);
+      const userId = await tokenManager.validate(token);
       req.body.userId = userId;
       next();
     } catch (err) {
