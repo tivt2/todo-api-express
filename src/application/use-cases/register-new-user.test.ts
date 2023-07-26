@@ -24,9 +24,6 @@ describe('Register new user', () => {
 
     expect(username).toBe(userRepoSpy.repo[0].username);
     expect(password).toBe(passwordEncrypterSpy.password);
-    expect(userRepoSpy.repo[0].hashedPassword).toBe(
-      passwordEncrypterSpy.hashedPassword,
-    );
   });
 
   test('register method should correctly encrypt the password before inserting into repo', async () => {
@@ -37,7 +34,7 @@ describe('Register new user', () => {
     await sut.register(username, password);
 
     expect(passwordEncrypterSpy.hashedPassword).toBe(
-      userRepoSpy.repo[0].hashedPassword,
+      userRepoSpy.repo[0].password,
     );
   });
 
@@ -47,12 +44,12 @@ describe('Register new user', () => {
     const password = 'any_password';
 
     const user = await sut.register(username, password);
-    const hashedPassword = userRepoSpy.repo[0].hashedPassword;
+    const hashedPassword = userRepoSpy.repo[0].password;
 
     expect(user).toMatchObject<TUser>({
       id: expect.any(String),
       username,
-      hashedPassword,
+      password: hashedPassword,
       createdAt: expect.any(Date),
     });
   });

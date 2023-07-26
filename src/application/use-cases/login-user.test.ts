@@ -36,7 +36,7 @@ describe('Login User', () => {
     userRepoSpy.repo.push({
       id: 'any_id',
       username: 'valid_username',
-      hashedPassword: 'any_hashed_password',
+      password: 'any_hashed_password',
       createdAt: new Date(),
     });
     passwordEncrypterSpy.isValid = false;
@@ -54,7 +54,7 @@ describe('Login User', () => {
     userRepoSpy.repo.push({
       id: 'any_id',
       username: 'valid_username',
-      hashedPassword: 'any_hashed_password',
+      password: 'any_hashed_password',
       createdAt: new Date(),
     });
 
