@@ -11,7 +11,7 @@ export class TokenManagerSpy implements ITokenManager {
 
   async generate(userId: string): Promise<string> {
     this.userId = userId;
-    const token = jwt.sign({ userId }, process.env.JWT_ACCESS_SECRET);
+    const token = jwt.sign({ userId }, process.env.JWT_ACCESS_SECRET as string);
     this.token = token;
     return token;
   }
@@ -20,7 +20,7 @@ export class TokenManagerSpy implements ITokenManager {
     this.token = token;
     const decoded = jwt.verify(
       token,
-      process.env.JWT_ACCESS_SECRET,
+      process.env.JWT_ACCESS_SECRET as string,
     ) as JWT_PAYLOAD;
 
     return decoded.userId;

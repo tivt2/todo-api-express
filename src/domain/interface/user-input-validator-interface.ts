@@ -1,3 +1,3 @@
 export interface IUserInputValidator {
-  isInvalid(email: string, password: string): boolean;
+  isValid(username: string, password: string): boolean;
 }
