@@ -203,8 +203,17 @@ export class RefreshTokensMap {
   }
 
   private hashKey(key: string): number {
-    const idx = key.charCodeAt(0) % this.capacity;
+    const idx = this.djb2(key) % this.capacity;
     return idx;
+  }
+
+  private djb2(str: string) {
+    let len = str.length;
+    let hash = 5381;
+    for (let i = 0; i < len; i++) {
+      hash = ((hash << 5) + hash + str.charCodeAt(i)) & 0xffffffff;
+    }
+    return hash >>> 0;
   }
 
   private growMap(): void {
