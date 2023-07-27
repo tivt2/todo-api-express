@@ -1,3 +1,5 @@
+import { IRefreshStorage } from '../../../domain/interface/refresh-storage-interface';
+
 type RefreshNode = {
   key: string;
   token: string;
@@ -8,7 +10,7 @@ type RefreshNode = {
   nextHash?: RefreshNode;
 };
 
-export class RefreshTokensMap {
+export class RefreshTokenMap implements IRefreshStorage {
   private refreshMap: Array<[head?: RefreshNode, tail?: RefreshNode]>;
   private dataLength;
 
@@ -30,7 +32,7 @@ export class RefreshTokensMap {
     this.head = this.tail = undefined;
   }
 
-  set(key: string, token: string): void {
+  set(key: string, token: string): { key: string; token: string } | undefined {
     this.growMap();
 
     const idx = this.hashKey(key);
@@ -45,7 +47,9 @@ export class RefreshTokensMap {
       return;
     }
 
+    const oldToken = nodeExists.token;
     nodeExists.token = token;
+    return { key, token: oldToken };
   }
 
   get(key: string): { key: string; token: string } | undefined {

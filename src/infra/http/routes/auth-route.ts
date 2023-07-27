@@ -1,17 +1,17 @@
-import { InvalidCredentialsError } from '../../../application/errors/invalid-credential-error';
-import { IUserInputValidator } from '../../../domain/interface/user-input-validator-interface';
 import { Request, Response } from 'express';
+import { InvalidCredentialsError } from '../../../application/errors/invalid-credential-error';
+import { LoginUser } from '../../../application/use-cases/login-user';
+import { RegisterNewUser } from '../../../application/use-cases/register-new-user';
+import { IUserInputValidator } from '../../../domain/interface/user-input-validator-interface';
 import { UserRepository } from '../../db/user-repository';
 import { TokenManager } from '../../utils/token-manager';
 import { PasswordEncrypter } from '../../utils/password-encrypter';
-import { LoginUser } from '../../../application/use-cases/login-user';
-import { RegisterNewUser } from '../../../application/use-cases/register-new-user';
 import { DuplicatedUserError } from '../../errors/duplicated-user-error';
 import { UserNotFoundError } from '../../errors/user-not-found-error';
+import { refreshTokenStorage } from '../../utils/refresh-token-storage';
 
-export const loginRoute =
-  (userInputValidator: IUserInputValidator) =>
-  async (req: Request, res: Response) => {
+export function loginRoute(userInputValidator: IUserInputValidator) {
+  return async function (req: Request, res: Response) {
     const { username, password } = req.body;
 
     const isValid = userInputValidator.isValid(username, password);
@@ -25,17 +25,29 @@ export const loginRoute =
       }
 
       const userRepository = new UserRepository();
-      const tokenManager = new TokenManager();
+      const tokenManager = new TokenManager(
+        process.env.JWT_ACCESS_SECRET as string,
+      );
+      const refreshManager = new TokenManager(
+        process.env.JWT_REFRESH_SECRET as string,
+      );
+      const refreshStorage = refreshTokenStorage();
       const passwordEncrypter = new PasswordEncrypter();
       const loginUser = new LoginUser(
         userRepository,
         tokenManager,
+        refreshManager,
+        refreshStorage,
         passwordEncrypter,
       );
 
-      const token = await loginUser.login(username, password);
+      const { accessToken, refreshToken } = await loginUser.login(
+        username,
+        password,
+      );
+
       res.status(200);
-      res.json({ token });
+      res.json({ accessToken, refreshToken });
     } catch (err) {
       if (
         err instanceof InvalidCredentialsError ||
@@ -51,6 +63,7 @@ export const loginRoute =
       });
     }
   };
+}
 
 export const registerRoute =
   (userInputValidator: IUserInputValidator) =>

@@ -1,11 +1,11 @@
 import express, { Express } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
-import { loginRoute, registerRoute } from './routes/auth-route';
 import { UserInputValidator } from '../utils/user-input-validator';
-import connectMongoDB from '../db/mongo/db';
-import { authorization } from './middleware/authorization';
 import { TokenManager } from '../utils/token-manager';
+import { authorization } from './middleware/authorization';
+import { loginRoute, registerRoute } from './routes/auth-route';
+import connectMongoDB from '../db/mongo/db';
 import apiRouter from './api-router';
 
 const app: Express = express();
@@ -26,7 +26,9 @@ const userInputValidator = new UserInputValidator();
 app.post('/login', loginRoute(userInputValidator));
 app.post('/register', registerRoute(userInputValidator));
 
-const tokenManager = new TokenManager();
+app.get('/refresh');
+
+const tokenManager = new TokenManager(process.env.JWT_ACCESS_SECRET as string);
 app.use('/api', authorization(tokenManager), apiRouter);
 
 export default app;

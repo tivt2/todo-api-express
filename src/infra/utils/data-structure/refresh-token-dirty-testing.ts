@@ -1,6 +1,6 @@
-import { RefreshTokensMap } from './refresh-tokens-map';
+import { RefreshTokenMap } from './refresh-token-map';
 
-const myRefreshMap = new RefreshTokensMap();
+const myRefreshMap = new RefreshTokenMap();
 myRefreshMap.set('0', 'token0');
 myRefreshMap.set('1', 'token1');
 myRefreshMap.set('1', 'token1_changed');

@@ -7,17 +7,16 @@ type JWT_PAYLOAD = {
 };
 
 export class TokenManager implements ITokenManager {
+  constructor(private secret: string) {}
+
   async generate(userId: string): Promise<string> {
-    const token = jwt.sign({ userId }, process.env.JWT_ACCESS_SECRET as string);
+    const token = jwt.sign({ userId }, this.secret);
     return token;
   }
 
   async validate(token: string): Promise<string> {
     try {
-      const decoded = jwt.verify(
-        token,
-        process.env.JWT_ACCESS_SECRET as string,
-      ) as JWT_PAYLOAD;
+      const decoded = jwt.verify(token, this.secret) as JWT_PAYLOAD;
 
       return decoded.userId;
     } catch (err) {
