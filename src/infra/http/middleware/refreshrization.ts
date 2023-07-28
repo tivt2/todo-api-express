@@ -15,6 +15,11 @@ export const refreshrization =
 
     try {
       const userId = await tokenManager.validate(refreshToken);
+      if (!userId) {
+        res.status(403);
+        res.json({ message: 'Invalid token' });
+        return;
+      }
       req.body.userId = userId;
       next();
     } catch (err) {

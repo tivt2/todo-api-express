@@ -17,7 +17,7 @@ export const refreshRoute =
     try {
       const stored = refreshStorage.get(userId);
       if (!stored) {
-        res.status(401);
+        res.status(403);
         res.json({ message: 'Invalid token' });
         return;
       }
@@ -33,7 +33,7 @@ export const refreshRoute =
           return;
         }
 
-        res.status(401);
+        res.status(403);
         res.json({ message: 'Invalid token' });
         return;
       }
