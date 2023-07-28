@@ -47,7 +47,8 @@ export function loginRoute(userInputValidator: IUserInputValidator) {
       );
 
       res.status(200);
-      res.json({ accessToken, refreshToken });
+      res.cookie('refreshToken', refreshToken, { httpOnly: true });
+      res.json({ accessToken });
     } catch (err) {
       if (
         err instanceof InvalidCredentialsError ||
