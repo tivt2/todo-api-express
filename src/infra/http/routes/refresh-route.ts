@@ -1,15 +1,72 @@
 import { Request, Response } from 'express';
 import { refreshTokenStorage } from '../../utils/refresh-token-storage';
+import { IRefreshRepository } from '../../../domain/interface/refresh-repository-interface';
+import { ITokenManager } from '../../../domain/interface/token-manager-interface';
 
-export async function refreshRoute(req: Request, res: Response) {
-  const userId = req.body.userId;
-  const refreshToken = req.cookies.refreshToken;
+export const refreshRoute =
+  (
+    refreshRepository: IRefreshRepository,
+    refreshManager: ITokenManager,
+    accessManager: ITokenManager,
+  ) =>
+  async (req: Request, res: Response) => {
+    const userId = req.body.userId;
+    const refreshToken = req.cookies.refreshToken;
 
-  const refreshManager = refreshTokenStorage();
-  const stored = refreshManager.get(userId);
-  console.log(stored?.token === refreshToken);
+    const refreshStorage = refreshTokenStorage();
+    try {
+      const stored = refreshStorage.get(userId);
+      if (!stored) {
+        res.status(401);
+        res.json({ message: 'Invalid token' });
+        return;
+      }
 
-  res.json({
-    message: `invalidating token ${refreshToken} from userid ${userId}`,
-  });
-}
+      if (stored.token !== refreshToken) {
+        const isInvalidToken = await refreshRepository.findToken(
+          userId,
+          refreshToken,
+        );
+        if (isInvalidToken) {
+          res.status(403);
+          res.json({ message: 'Eat shit attacker' });
+          return;
+        }
+
+        res.status(401);
+        res.json({ message: 'Invalid token' });
+        return;
+      }
+
+      const isInserted = await refreshRepository.insert(userId, refreshToken);
+      if (!isInserted) {
+        res.status(500);
+        res.json({
+          message: 'Something wrong happen, please try again in a moment',
+        });
+        return;
+      }
+
+      const oneDayInSeconds = 60 * 60 * 24;
+      const newRefreshToken = await refreshManager.generate(
+        userId,
+        oneDayInSeconds,
+      );
+      refreshStorage.set(userId, newRefreshToken);
+
+      const fiveMinutesInSeconds = 60 * 5;
+      const newAccessToken = await accessManager.generate(
+        userId,
+        fiveMinutesInSeconds,
+      );
+
+      res.status(200);
+      res.cookie('refreshToken', newRefreshToken, { httpOnly: true });
+      res.json({ accessToken: newAccessToken });
+    } catch (err) {
+      res.status(500);
+      res.json({
+        message: 'Something wrong happen, please try again in a moment',
+      });
+    }
+  };

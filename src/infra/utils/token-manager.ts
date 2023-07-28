@@ -9,8 +9,13 @@ type JWT_PAYLOAD = {
 export class TokenManager implements ITokenManager {
   constructor(private secret: string) {}
 
-  async generate(userId: string): Promise<string> {
-    const token = jwt.sign({ userId }, this.secret);
+  async generate(
+    userId: string,
+    invalidateTimeInSeconds: number,
+  ): Promise<string> {
+    const token = jwt.sign({ userId }, this.secret, {
+      expiresIn: invalidateTimeInSeconds,
+    });
     return token;
   }
 

@@ -1,4 +1,4 @@
 export interface ITokenManager {
-  generate(userId: string): Promise<string>;
+  generate(userId: string, invalidateTimeInSeconds: number): Promise<string>;
   validate(token: string): Promise<string | undefined>;
 }
