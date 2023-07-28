@@ -122,8 +122,12 @@ export class RefreshTokenMap implements IRefreshStorage {
     }
   }
 
-  printMap(): void {
-    console.log(this.refreshMap);
+  get getRefresh(): Array<[head?: RefreshNode, tail?: RefreshNode]> {
+    return this.refreshMap;
+  }
+
+  get getHead(): RefreshNode | undefined {
+    return this.head;
   }
 
   private appendIterator(node: RefreshNode): void {

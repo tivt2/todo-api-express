@@ -25,7 +25,7 @@ export function loginRoute(userInputValidator: IUserInputValidator) {
       }
 
       const userRepository = new UserRepository();
-      const tokenManager = new TokenManager(
+      const accessManager = new TokenManager(
         process.env.JWT_ACCESS_SECRET as string,
       );
       const refreshManager = new TokenManager(
@@ -35,7 +35,7 @@ export function loginRoute(userInputValidator: IUserInputValidator) {
       const passwordEncrypter = new PasswordEncrypter();
       const loginUser = new LoginUser(
         userRepository,
-        tokenManager,
+        accessManager,
         refreshManager,
         refreshStorage,
         passwordEncrypter,
