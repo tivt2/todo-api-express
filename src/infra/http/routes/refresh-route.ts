@@ -1,21 +1,21 @@
 import { Request, Response } from 'express';
-import { refreshTokenStorage } from '../../utils/refresh-token-storage';
 import { RefreshRepository } from '../../db/refresh-repository';
 import { TokenManager } from '../../utils/token-manager';
+import { RefreshStorage } from '../../utils/refresh-storage';
 
 export const refreshRoute =
   (
     refreshRepository: RefreshRepository,
     refreshManager: TokenManager,
     accessManager: TokenManager,
+    refreshStorage: RefreshStorage,
   ) =>
   async (req: Request, res: Response) => {
     const userId = req.body.userId;
     const refreshToken = req.cookies.refreshToken;
 
-    const refreshStorage = refreshTokenStorage();
     try {
-      const stored = refreshStorage.get(userId);
+      const stored = refreshStorage.getToken(userId);
       if (!stored) {
         res.status(403);
         res.json({ message: 'Invalid token' });
@@ -58,7 +58,10 @@ export const refreshRoute =
       }
 
       const newRefreshToken = await refreshManager.generate(userId);
-      refreshStorage.set(userId, newRefreshToken);
+      refreshStorage.setToken(userId, {
+        token: newRefreshToken,
+        createdAt: new Date(),
+      });
 
       const newAccessToken = await accessManager.generate(userId);
 

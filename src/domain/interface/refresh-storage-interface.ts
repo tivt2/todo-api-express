@@ -1,7 +1,10 @@
-type TStorageResponse = { key: string; token: string };
+import { TRefreshStorageValue } from '../entity/refresh-storage-value';
 
 export interface IRefreshStorage {
-  set(key: string, token: string): TStorageResponse | undefined;
-  get(key: string): TStorageResponse | undefined;
-  remove(key: string): TStorageResponse | undefined;
+  setToken(
+    key: string,
+    value: TRefreshStorageValue,
+  ): TRefreshStorageValue | undefined;
+  getToken(key: string): TRefreshStorageValue | undefined;
+  removeToken(key: string): TRefreshStorageValue | undefined;
 }

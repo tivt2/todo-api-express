@@ -2,8 +2,8 @@ import { LoginUser } from '../../../application/use-cases/login-user';
 import { RegisterNewUser } from '../../../application/use-cases/register-new-user';
 import { RefreshRepository } from '../../db/refresh-repository';
 import { UserRepository } from '../../db/user-repository';
-import { RefreshTokenMap } from '../../utils/data-structure/refresh-token-map';
 import { PasswordEncrypter } from '../../utils/password-encrypter';
+import { RefreshStorage } from '../../utils/refresh-storage';
 import { TokenManager } from '../../utils/token-manager';
 import { UserInputValidator } from '../../utils/user-input-validator';
 
@@ -55,11 +55,11 @@ export const buildRefreshManager = (function initializer() {
 })();
 
 export const buildRefreshStorage = (function initializer() {
-  let refreshStorageSingleton: RefreshTokenMap | undefined;
+  let refreshStorageSingleton: RefreshStorage | undefined;
 
-  return function (): RefreshTokenMap {
+  return function (): RefreshStorage {
     if (!refreshStorageSingleton) {
-      refreshStorageSingleton = new RefreshTokenMap();
+      refreshStorageSingleton = new RefreshStorage();
     }
 
     return refreshStorageSingleton;

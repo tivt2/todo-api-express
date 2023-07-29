@@ -4,13 +4,13 @@ import { TokenManagerSpy } from '../../mocks/token-manager-spy';
 import { LoginUser } from './login-user';
 import { InvalidCredentialsError } from '../errors/invalid-credential-error';
 import { UserNotFoundError } from '../../infra/errors/user-not-found-error';
-import { MyHashMap } from '../../infra/utils/data-structure/my-hash-map';
+import { RefreshStorage } from '../../infra/utils/refresh-storage';
 
 function makeSut() {
   const userRepoSpy = new UserRepositorySpy();
   const accessTokenManagerSpy = new TokenManagerSpy();
   const refreshTokenManagerSpy = new TokenManagerSpy();
-  const refreshStorage = new MyHashMap();
+  const refreshStorage = new RefreshStorage();
   const passwordEncrypterSpy = new PasswordEncrypterSpy();
 
   const sut = new LoginUser(
