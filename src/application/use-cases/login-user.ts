@@ -29,7 +29,10 @@ export class LoginUser {
 
     const accessToken = await this.tokenManager.generate(user.id);
     const refreshToken = await this.refreshManager.generate(user.id);
-    this.refreshStorage.set(user.id, refreshToken);
+    this.refreshStorage.setToken(user.id, {
+      token: refreshToken,
+      createdAt: new Date(),
+    });
 
     return { accessToken, refreshToken };
   }
