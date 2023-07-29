@@ -9,14 +9,14 @@ export class RefreshStorage implements IRefreshStorage {
     key: string,
     value: TRefreshStorageValue,
   ): TRefreshStorageValue | undefined {
-    return;
+    return this.storage.set(key, value);
   }
 
   getToken(key: string): TRefreshStorageValue | undefined {
-    return;
+    return this.storage.get(key);
   }
 
   removeToken(key: string): TRefreshStorageValue | undefined {
-    return;
+    return this.storage.remove(key);
   }
 }
