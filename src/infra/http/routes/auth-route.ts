@@ -3,14 +3,13 @@ import { InvalidCredentialsError } from '../../../application/errors/invalid-cre
 import { LoginUser } from '../../../application/use-cases/login-user';
 import { RegisterNewUser } from '../../../application/use-cases/register-new-user';
 import { IUserInputValidator } from '../../../domain/interface/user-input-validator-interface';
-import { UserRepository } from '../../db/user-repository';
-import { TokenManager } from '../../utils/token-manager';
-import { PasswordEncrypter } from '../../utils/password-encrypter';
 import { DuplicatedUserError } from '../../errors/duplicated-user-error';
 import { UserNotFoundError } from '../../errors/user-not-found-error';
-import { refreshTokenStorage } from '../../utils/refresh-token-storage';
 
-export function loginRoute(userInputValidator: IUserInputValidator) {
+export function loginRoute(
+  userInputValidator: IUserInputValidator,
+  loginUser: LoginUser,
+) {
   return async function (req: Request, res: Response) {
     const { username, password } = req.body;
 
@@ -23,23 +22,6 @@ export function loginRoute(userInputValidator: IUserInputValidator) {
         });
         return;
       }
-
-      const userRepository = new UserRepository();
-      const accessManager = new TokenManager(
-        process.env.JWT_ACCESS_SECRET as string,
-      );
-      const refreshManager = new TokenManager(
-        process.env.JWT_REFRESH_SECRET as string,
-      );
-      const refreshStorage = refreshTokenStorage();
-      const passwordEncrypter = new PasswordEncrypter();
-      const loginUser = new LoginUser(
-        userRepository,
-        accessManager,
-        refreshManager,
-        refreshStorage,
-        passwordEncrypter,
-      );
 
       const { accessToken, refreshToken } = await loginUser.login(
         username,
@@ -67,7 +49,7 @@ export function loginRoute(userInputValidator: IUserInputValidator) {
 }
 
 export const registerRoute =
-  (userInputValidator: IUserInputValidator) =>
+  (userInputValidator: IUserInputValidator, registerNewUser: RegisterNewUser) =>
   async (req: Request, res: Response) => {
     const { username, password } = req.body;
 
@@ -81,13 +63,6 @@ export const registerRoute =
         });
         return;
       }
-
-      const userRepository = new UserRepository();
-      const passwordEncrypter = new PasswordEncrypter();
-      const registerNewUser = new RegisterNewUser(
-        userRepository,
-        passwordEncrypter,
-      );
 
       const user = await registerNewUser.register(username, password);
       res.status(200);

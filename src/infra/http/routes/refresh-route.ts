@@ -38,7 +38,17 @@ export const refreshRoute =
         return;
       }
 
-      const isInserted = await refreshRepository.insert(userId, refreshToken);
+      let isInserted: boolean = false;
+      try {
+        //needs sometype of buffer to deal with high rate insert to DB
+        isInserted = await refreshRepository.insert(userId, refreshToken);
+      } catch (err) {
+        res.status(500);
+        res.json({
+          message: 'Something wrong happen, please try again in a moment',
+        });
+        return;
+      }
       if (!isInserted) {
         res.status(500);
         res.json({

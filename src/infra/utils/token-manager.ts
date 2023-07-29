@@ -1,20 +1,17 @@
 import { ITokenManager } from '../../domain/interface/token-manager-interface';
-import jwt from 'jsonwebtoken';
 import { InvalidTokenError } from './error/invalid-token-error';
+import jwt from 'jsonwebtoken';
 
 type JWT_PAYLOAD = {
   userId: string;
 };
 
 export class TokenManager implements ITokenManager {
-  constructor(private secret: string) {}
+  constructor(private secret: string, private expiresIn: number) {}
 
-  async generate(
-    userId: string,
-    invalidateTimeInSeconds: number,
-  ): Promise<string> {
+  async generate(userId: string): Promise<string> {
     const token = jwt.sign({ userId }, this.secret, {
-      expiresIn: invalidateTimeInSeconds,
+      expiresIn: this.expiresIn,
     });
     return token;
   }
