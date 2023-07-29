@@ -2,12 +2,12 @@ import { Request, Response } from 'express';
 import { InvalidCredentialsError } from '../../../application/errors/invalid-credential-error';
 import { LoginUser } from '../../../application/use-cases/login-user';
 import { RegisterNewUser } from '../../../application/use-cases/register-new-user';
-import { IUserInputValidator } from '../../../domain/interface/user-input-validator-interface';
 import { DuplicatedUserError } from '../../errors/duplicated-user-error';
 import { UserNotFoundError } from '../../errors/user-not-found-error';
+import { UserInputValidator } from '../../utils/user-input-validator';
 
 export function loginRoute(
-  userInputValidator: IUserInputValidator,
+  userInputValidator: UserInputValidator,
   loginUser: LoginUser,
 ) {
   return async function (req: Request, res: Response) {
@@ -49,7 +49,7 @@ export function loginRoute(
 }
 
 export const registerRoute =
-  (userInputValidator: IUserInputValidator, registerNewUser: RegisterNewUser) =>
+  (userInputValidator: UserInputValidator, registerNewUser: RegisterNewUser) =>
   async (req: Request, res: Response) => {
     const { username, password } = req.body;
 

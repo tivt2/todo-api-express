@@ -1,13 +1,13 @@
 import { Request, Response } from 'express';
 import { refreshTokenStorage } from '../../utils/refresh-token-storage';
-import { IRefreshRepository } from '../../../domain/interface/refresh-repository-interface';
-import { ITokenManager } from '../../../domain/interface/token-manager-interface';
+import { RefreshRepository } from '../../db/refresh-repository';
+import { TokenManager } from '../../utils/token-manager';
 
 export const refreshRoute =
   (
-    refreshRepository: IRefreshRepository,
-    refreshManager: ITokenManager,
-    accessManager: ITokenManager,
+    refreshRepository: RefreshRepository,
+    refreshManager: TokenManager,
+    accessManager: TokenManager,
   ) =>
   async (req: Request, res: Response) => {
     const userId = req.body.userId;
@@ -57,18 +57,10 @@ export const refreshRoute =
         return;
       }
 
-      const oneDayInSeconds = 60 * 60 * 24;
-      const newRefreshToken = await refreshManager.generate(
-        userId,
-        oneDayInSeconds,
-      );
+      const newRefreshToken = await refreshManager.generate(userId);
       refreshStorage.set(userId, newRefreshToken);
 
-      const fiveMinutesInSeconds = 60 * 5;
-      const newAccessToken = await accessManager.generate(
-        userId,
-        fiveMinutesInSeconds,
-      );
+      const newAccessToken = await accessManager.generate(userId);
 
       res.status(200);
       res.cookie('refreshToken', newRefreshToken, { httpOnly: true });

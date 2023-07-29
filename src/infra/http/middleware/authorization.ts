@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
-import { ITokenManager } from '../../../domain/interface/token-manager-interface';
 import { InvalidTokenError } from '../../utils/error/invalid-token-error';
+import { TokenManager } from '../../utils/token-manager';
 
 export const authorization =
-  (tokenManager: ITokenManager) =>
+  (tokenManager: TokenManager) =>
   async (req: Request, res: Response, next: NextFunction) => {
     const bearer = req.headers.authorization;
 
