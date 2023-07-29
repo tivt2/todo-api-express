@@ -12,6 +12,7 @@ import {
   buildLoginUser,
   buildRefreshManager,
   buildRefreshRepository,
+  buildRefreshStorage,
   buildRegisterNewUser,
   buildUserInputValidator,
 } from './builders/builders';
@@ -45,6 +46,7 @@ app.get(
     buildRefreshRepository(),
     buildRefreshManager(),
     buildAccessManager(),
+    buildRefreshStorage(),
   ),
 );
 
