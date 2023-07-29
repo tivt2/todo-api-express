@@ -4,8 +4,12 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { authorization } from './middleware/authorization';
 import { refreshrization } from './middleware/refreshrization';
-import { loginRoute, registerRoute } from './routes/auth-route';
-import { refreshRoute } from './routes/refresh-route';
+import {
+  loginRoute,
+  logoutRoute,
+  refreshRoute,
+  registerRoute,
+} from './routes/auth-routes';
 import apiRouter from './api-router';
 import {
   buildAccessManager,
@@ -37,6 +41,11 @@ app.post('/login', loginRoute(buildUserInputValidator(), buildLoginUser()));
 app.post(
   '/register',
   registerRoute(buildUserInputValidator(), buildRegisterNewUser()),
+);
+app.post(
+  '/logout',
+  refreshrization(buildRefreshManager()),
+  logoutRoute(buildRefreshRepository(), buildRefreshStorage()),
 );
 
 app.get(
