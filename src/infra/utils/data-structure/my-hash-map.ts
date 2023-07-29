@@ -1,42 +1,41 @@
-import { IRefreshStorage } from '../../../domain/interface/refresh-storage-interface';
-
-type RefreshNode = {
+type RefreshNode<T> = {
   key: string;
-  token: string;
-  createdAt: Date;
-  prevIterator?: RefreshNode;
-  nextIterator?: RefreshNode;
-  prevHash?: RefreshNode;
-  nextHash?: RefreshNode;
+  value: T;
+  prevIterator?: RefreshNode<T>;
+  nextIterator?: RefreshNode<T>;
+  prevHash?: RefreshNode<T>;
+  nextHash?: RefreshNode<T>;
 };
 
-export class RefreshTokenMap implements IRefreshStorage {
-  private refreshMap: Array<[head?: RefreshNode, tail?: RefreshNode]>;
+export class MyHashMap<T> {
+  private refreshMap: Array<[head?: RefreshNode<T>, tail?: RefreshNode<T>]>;
   private dataLength;
+  private minimumSize;
 
-  private head?: RefreshNode;
-  private tail?: RefreshNode;
+  private head?: RefreshNode<T>;
+  private tail?: RefreshNode<T>;
 
   constructor(
     private capacity = 8,
     private growLoadFactor = 0.7,
     private shrinkLoadFactor = 0.3,
     private sizeChangeMultiplier = 2,
-    private minimumSize = 8,
   ) {
     this.refreshMap = Array.from({ length: this.capacity }, () => [
       undefined,
       undefined,
     ]);
     this.dataLength = 0;
+    this.minimumSize = this.capacity;
+
     this.head = this.tail = undefined;
   }
 
-  set(key: string, token: string): { key: string; token: string } | undefined {
+  set(key: string, value: T): T | undefined {
     this.growMap();
 
     const idx = this.hashKey(key);
-    const node = this.makeNode(key, token);
+    const node = this.makeNode(key, value);
     const hashPos = this.refreshMap[idx];
 
     const nodeExists = this.findNode(hashPos[0], key);
@@ -47,12 +46,12 @@ export class RefreshTokenMap implements IRefreshStorage {
       return;
     }
 
-    const oldToken = nodeExists.token;
-    nodeExists.token = token;
-    return { key, token: oldToken };
+    const oldValue = nodeExists.value;
+    nodeExists.value = value;
+    return oldValue;
   }
 
-  get(key: string): { key: string; token: string } | undefined {
+  get(key: string): T | undefined {
     const idx = this.hashKey(key);
     const headOfIdx = this.refreshMap[idx][0];
 
@@ -65,10 +64,10 @@ export class RefreshTokenMap implements IRefreshStorage {
       return;
     }
 
-    return { key: node.key, token: node.token };
+    return node.value;
   }
 
-  remove(key: string): { key: string; token: string } | undefined {
+  remove(key: string): T | undefined {
     this.shrinkMap();
 
     const idx = this.hashKey(key);
@@ -85,7 +84,7 @@ export class RefreshTokenMap implements IRefreshStorage {
 
     this.dataLength--;
     this.breakLink(node, idx);
-    return { key: node.key, token: node.token };
+    return node.value;
   }
 
   print(): void {
@@ -122,15 +121,15 @@ export class RefreshTokenMap implements IRefreshStorage {
     }
   }
 
-  get getRefresh(): Array<[head?: RefreshNode, tail?: RefreshNode]> {
+  get getRefresh(): Array<[head?: RefreshNode<T>, tail?: RefreshNode<T>]> {
     return this.refreshMap;
   }
 
-  get getHead(): RefreshNode | undefined {
+  get getHead(): RefreshNode<T> | undefined {
     return this.head;
   }
 
-  private appendIterator(node: RefreshNode): void {
+  private appendIterator(node: RefreshNode<T>): void {
     const oldTail = this.tail;
     if (!oldTail) {
       this.head = this.tail = node;
@@ -142,7 +141,7 @@ export class RefreshTokenMap implements IRefreshStorage {
     oldTail.nextIterator = node;
   }
 
-  private appendHash(node: RefreshNode, idx: number): void {
+  private appendHash(node: RefreshNode<T>, idx: number): void {
     const hashPos = this.refreshMap[idx];
     const oldTail = hashPos[1];
     if (!oldTail) {
@@ -155,7 +154,7 @@ export class RefreshTokenMap implements IRefreshStorage {
     oldTail.nextHash = node;
   }
 
-  private breakLink(node: RefreshNode, idx: number): void {
+  private breakLink(node: RefreshNode<T>, idx: number): void {
     const hashPos = this.refreshMap[idx];
 
     if (this.dataLength === 1) {
@@ -200,10 +199,10 @@ export class RefreshTokenMap implements IRefreshStorage {
   }
 
   private findNode(
-    head: RefreshNode | undefined,
+    head: RefreshNode<T> | undefined,
     key: string,
-  ): RefreshNode | undefined {
-    let curr: RefreshNode | undefined = head;
+  ): RefreshNode<T> | undefined {
+    let curr: RefreshNode<T> | undefined = head;
     while (curr && curr.key !== key) {
       curr = curr.nextHash;
     }
@@ -238,7 +237,7 @@ export class RefreshTokenMap implements IRefreshStorage {
 
     let curr = this.head;
     while (curr) {
-      const hashIdx = this.hashKey(curr?.key);
+      const hashIdx = this.hashKey(curr.key);
       this.appendHash(curr, hashIdx);
       curr = curr.nextIterator;
     }
@@ -261,18 +260,17 @@ export class RefreshTokenMap implements IRefreshStorage {
 
     let curr = this.head;
     while (curr) {
-      const hashIdx = this.hashKey(curr?.key);
+      const hashIdx = this.hashKey(curr.key);
       this.appendHash(curr, hashIdx);
       curr = curr.nextIterator;
     }
   }
 
-  private makeNode(key: string, token: string): RefreshNode {
+  private makeNode(key: string, value: T): RefreshNode<T> {
     const node = {
       key,
-      token,
-      createdAt: new Date(),
-    } as RefreshNode;
+      value,
+    } as RefreshNode<T>;
     return node;
   }
 }

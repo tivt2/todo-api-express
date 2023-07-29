@@ -1,16 +1,18 @@
-import { RefreshTokenMap } from './refresh-token-map';
+import { MyHashMap } from './my-hash-map';
 
 describe('Refresh Token Map', () => {
   test('Map should correctly insert item as the head of iterator and head of corresponding hash', () => {
-    const sut = new RefreshTokenMap();
-    const data = { key: '0', token: 'token0' };
+    const sut = new MyHashMap();
+    const data = {
+      key: '0',
+      value: { token: 'token0', createdAt: new Date() },
+    };
 
-    sut.set(data.key, data.token);
+    sut.set(data.key, data.value);
 
     expect(sut.getHead).toMatchObject({
       key: data.key,
-      token: data.token,
-      createdAt: expect.any(Date),
+      value: { token: data.value.token, createdAt: expect.any(Date) },
     });
     const setIdx = sut.getRefresh.findIndex((bucket) => {
       for (let i = 0; i < bucket.length; i++) {
@@ -22,25 +24,33 @@ describe('Refresh Token Map', () => {
     });
     expect(sut.getRefresh[setIdx][0]).toMatchObject({
       key: data.key,
-      token: data.token,
-      createdAt: expect.any(Date),
+      value: {
+        token: data.value.token,
+        createdAt: expect.any(Date),
+      },
     });
   });
 
   test('Map get method should correct return key and token', () => {
-    const sut = new RefreshTokenMap();
-    const data = { key: '0', token: 'token0' };
+    const sut = new MyHashMap();
+    const data = {
+      key: '0',
+      value: { token: 'token0', createdAt: new Date() },
+    };
 
-    sut.set(data.key, data.token);
+    sut.set(data.key, data.value);
     const ans = sut.get(data.key);
-    expect(ans).toEqual(data);
+    expect(ans).toEqual(data.value);
   });
 
   test('Map remove method should correctly remove key value pair from iterator and hashmap', () => {
-    const sut = new RefreshTokenMap();
-    const data = { key: '0', token: 'token0' };
+    const sut = new MyHashMap();
+    const data = {
+      key: '0',
+      value: { token: 'token0', createdAt: new Date() },
+    };
 
-    sut.set(data.key, data.token);
+    sut.set(data.key, data.value);
     const setIdx = sut.getRefresh.findIndex((bucket) => {
       for (let i = 0; i < bucket.length; i++) {
         if (!bucket[i]) {
@@ -50,7 +60,7 @@ describe('Refresh Token Map', () => {
       }
     });
     const ans = sut.remove(data.key);
-    expect(ans).toEqual(data);
+    expect(ans).toEqual(data.value);
     expect(sut.getHead).toBe(undefined);
     expect(sut.getRefresh[setIdx][0]).toBe(undefined);
 
@@ -61,12 +71,18 @@ describe('Refresh Token Map', () => {
   });
 
   test('Map set should insert two itens where nextIterator of head should be the second insert and prevIterator of 2 item shoudl be head', () => {
-    const sut = new RefreshTokenMap();
-    const data0 = { key: '0', token: 'token0' };
-    const data1 = { key: '1', token: 'token1' };
+    const sut = new MyHashMap();
+    const data0 = {
+      key: '0',
+      value: { token: 'token0', createdAt: new Date() },
+    };
+    const data1 = {
+      key: '1',
+      value: { token: 'token1', createdAt: new Date() },
+    };
 
-    sut.set(data0.key, data0.token);
-    sut.set(data1.key, data1.token);
+    sut.set(data0.key, data0.value);
+    sut.set(data1.key, data1.value);
     const setIdx0 = sut.getRefresh.findIndex((bucket) => {
       for (let i = 0; i < bucket.length; i++) {
         if (!bucket[i]) {
@@ -86,34 +102,41 @@ describe('Refresh Token Map', () => {
 
     expect(sut.getHead).toMatchObject({
       ...data0,
-      createdAt: expect.any(Date),
+      value: { ...data0.value, createdAt: expect.any(Date) },
       nextIterator: expect.objectContaining({
         ...data1,
-        createdAt: expect.any(Date),
-        prevIterator: expect.objectContaining(data0),
+        value: { ...data1.value, createdAt: expect.any(Date) },
+        prevIterator: expect.objectContaining({
+          ...data0,
+          value: { ...data0.value, createdAt: expect.any(Date) },
+        }),
       }),
     });
 
     if (setIdx0 === setIdx1) {
       expect(sut.getRefresh[setIdx0][0]).toMatchObject({
         ...data0,
+        value: { ...data0.value, createdAt: expect.any(Date) },
         nextHash: expect.objectContaining({
           ...data1,
-          prevHash: expect.objectContaining(data0),
+          value: { ...data1.value, createdAt: expect.any(Date) },
+          prevHash: expect.objectContaining(data0.value),
         }),
       });
     } else {
       expect(sut.getRefresh[setIdx0][0]).toMatchObject({
         ...data0,
+        value: { ...data0.value, createdAt: expect.any(Date) },
       });
       expect(sut.getRefresh[setIdx1][0]).toMatchObject({
         ...data1,
+        value: { ...data1.value, createdAt: expect.any(Date) },
       });
     }
   });
 
   test('Map set method should insert items in the correct iterator position and hash position', () => {
-    const sut = new RefreshTokenMap();
+    const sut = new MyHashMap();
     const dataOrder = ['0', '1', '8', '7', '9'];
     const data = dataOrder.map((item) => ({
       key: item,
