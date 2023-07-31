@@ -1,6 +1,7 @@
 export type TUser = {
-  id: string;
+  _id: string;
   username: string;
   password: string;
+  todosId: string[];
   createdAt: Date;
 };
