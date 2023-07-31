@@ -48,7 +48,9 @@ describe('Login User', () => {
       id: 'any_id',
       username: 'valid_username',
       password: 'any_hashed_password',
+      todosOrder: [],
       createdAt: new Date(),
+      updatedAt: new Date(),
     });
     passwordEncrypterSpy.isValid = false;
 
@@ -71,7 +73,9 @@ describe('Login User', () => {
       id: 'any_id',
       username: 'valid_username',
       password: 'any_hashed_password',
+      todosOrder: [],
       createdAt: new Date(),
+      updatedAt: new Date(),
     });
 
     const { accessToken, refreshToken } = await sut.login(username, password);

@@ -27,9 +27,9 @@ export class LoginUser {
       throw new InvalidCredentialsError();
     }
 
-    const accessToken = await this.tokenManager.generate(user._id);
-    const refreshToken = await this.refreshManager.generate(user._id);
-    this.refreshStorage.setToken(user._id, {
+    const accessToken = await this.tokenManager.generate(user.id);
+    const refreshToken = await this.refreshManager.generate(user.id);
+    this.refreshStorage.setToken(user.id, {
       token: refreshToken,
       createdAt: new Date(),
     });

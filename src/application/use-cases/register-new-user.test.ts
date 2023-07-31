@@ -50,7 +50,9 @@ describe('Register new user', () => {
       id: expect.any(String),
       username,
       password: hashedPassword,
+      todosOrder: expect.any(Array),
       createdAt: expect.any(Date),
+      updatedAt: expect.any(Date),
     });
   });
 });

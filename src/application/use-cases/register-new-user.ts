@@ -11,7 +11,7 @@ export class RegisterNewUser {
   async register(username: string, password: string): Promise<TUser> {
     const hashedPassword = await this.passwordEncrypter.hashPassword(password);
 
-    const user = await this.userRepo.insert(username, hashedPassword);
+    const user = await this.userRepo.createUser(username, hashedPassword);
     return user;
   }
 }

@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { InvalidCredentialsError } from '../../../application/errors/invalid-credential-error';
 import { LoginUser } from '../../../application/use-cases/login-user';
 import { RegisterNewUser } from '../../../application/use-cases/register-new-user';
-import { DuplicatedUserError } from '../../errors/duplicated-user-error';
 import { UserNotFoundError } from '../../errors/user-not-found-error';
 import { UserInputValidator } from '../../utils/user-input-validator';
 import { RefreshRepository } from '../../db/refresh-repository';
@@ -83,7 +82,7 @@ export function logoutRoute(
         return;
       }
 
-      await refreshRepository.insert(userId, refreshToken);
+      await refreshRepository.insertToken(userId, refreshToken);
 
       res.status(200);
       res.json({ message: 'See you next time' });
@@ -117,16 +116,6 @@ export const registerRoute =
       res.json({ message: `Welcome ${user.username}, enjoy` });
       return res;
     } catch (err) {
-      if (
-        typeof err === 'object' &&
-        (err as DuplicatedUserError).code === 11000
-      ) {
-        res.status(409);
-        res.json({
-          message: 'User already exists',
-        });
-        return;
-      }
       res.status(500);
       res.json({
         message: 'Something wrong happen, please try again in a moment',
@@ -171,7 +160,7 @@ export const refreshRoute =
       }
 
       //needs sometype of buffer to deal with high rate insert to DB
-      await refreshRepository.insert(userId, refreshToken);
+      await refreshRepository.insertToken(userId, refreshToken);
 
       const newRefreshToken = await refreshManager.generate(userId);
       refreshStorage.setToken(userId, {

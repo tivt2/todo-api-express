@@ -1,5 +1,6 @@
 export type TTodo = {
-  _id: string;
+  id: string;
+  userId: string;
   content: string;
   completed: boolean;
   createdAt: Date;

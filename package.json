@@ -7,7 +7,10 @@
     "build": "rimraf ./dist && tsc",
     "start": "npm run build && node dist/infra/http/index.js",
     "dev": "nodemon",
-    "test": "jest --no-cache --watchAll"
+    "test": "jest --no-cache --watchAll",
+    "generate": "drizzle-kit generate:pg --config=drizzle.config.ts",
+    "migrate": "npx ts-node -r dotenv/config src/infra/db/drizzle/migrate.ts",
+    "introspect": "drizzle-kit introspect:pg"
   },
   "keywords": [],
   "author": "",

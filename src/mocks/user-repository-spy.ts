@@ -7,12 +7,14 @@ export class UserRepositorySpy implements IUserRepository {
   repo: TUser[] = [];
   username = '';
 
-  async insert(username: string, password: string): Promise<TUser> {
+  async createUser(username: string, password: string): Promise<TUser> {
     const user = {
       id: crypto.randomUUID(),
       username,
       password,
+      todosOrder: [],
       createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
     this.repo.push(user);

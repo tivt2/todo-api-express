@@ -21,9 +21,6 @@ import {
   buildUserInputValidator,
 } from './builders/builders';
 
-import connectMongoDB from '../db/mongo/db';
-connectMongoDB();
-
 const app: Express = express();
 
 app.use(cors());

@@ -1,7 +1,8 @@
 export type TUser = {
-  _id: string;
+  id: string;
   username: string;
   password: string;
-  todosId: string[];
+  todosOrder: string[];
   createdAt: Date;
+  updatedAt: Date;
 };
