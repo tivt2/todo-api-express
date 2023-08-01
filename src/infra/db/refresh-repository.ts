@@ -2,10 +2,16 @@ import { TRefresh } from '../../domain/entity/refresh';
 import { IRefreshRepository } from '../../domain/interface/refresh-repository-interface';
 import { InsertRefreshError } from '../errors/insert-refresh-error';
 import { RefreshNotFoundError } from '../errors/refresh-not-found-error';
+import { deleteOldTokens } from './drizzle/queries/deleteOldTokens';
 import { findFirstRefreshToken } from './drizzle/queries/findFirstRefreshToken';
 import { insertRefreshToken } from './drizzle/queries/insertRefreshToken';
 
 export class RefreshRepository implements IRefreshRepository {
+  private deleteInterval;
+  constructor(private expiresInMs: number, private clearIntervalInMs: number) {
+    this.deleteInterval = setInterval(() => this.clearInvalid(expiresInMs), clearIntervalInMs)
+  }
+
   async insertToken(
     userId: string,
     token: string,
@@ -28,5 +34,7 @@ export class RefreshRepository implements IRefreshRepository {
     return refresh;
   }
 
-  async clearInvalid(olderThan: number): Promise<void> {}
+  private async clearInvalid(clearDelayInMs: number): Promise<void> {
+    await deleteOldTokens(clearDelayInMs)
+  }
 }

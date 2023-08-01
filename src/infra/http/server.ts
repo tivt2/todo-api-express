@@ -45,7 +45,7 @@ app.post(
   logoutRoute(buildRefreshRepository(), buildRefreshStorage()),
 );
 
-app.get(
+app.post(
   '/refresh',
   refreshrization(buildRefreshManager()),
   refreshRoute(

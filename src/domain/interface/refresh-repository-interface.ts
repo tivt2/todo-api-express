@@ -7,5 +7,4 @@ export interface IRefreshRepository {
     createdAt: Date,
   ): Promise<TRefresh>;
   findToken(userId: string, token: string): Promise<TRefresh>;
-  clearInvalid(olderThan: number): Promise<void>;
 }

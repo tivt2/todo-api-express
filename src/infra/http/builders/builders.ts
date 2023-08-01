@@ -7,6 +7,12 @@ import { RefreshStorage } from '../../utils/refresh-storage';
 import { TokenManager } from '../../utils/token-manager';
 import { UserInputValidator } from '../../utils/user-input-validator';
 
+const ACCESS_EXPIRES_IN_SEC = 60 * 5 // FIVE MINUTES IN SECONDS
+
+const REFRESH_EXPIRES_IN_S = 60 * 60 * 24 // ONE DAY IN SECONDS
+const REFRESH_EXPIRES_IN_MS = REFRESH_EXPIRES_IN_S * 1000 // ONE DAY IN MILLISECONDS
+const REFRESH_INTERVAL_TO_CLEAR_DB_IN_MS = 1000 * 60 * 60 // ONE HOUR IN MILLISECONDS
+
 export const buildUserInputValidator = (function initializer() {
   let userInputValidator: UserInputValidator | undefined;
 
@@ -25,10 +31,9 @@ export const buildAccessManager = (function initializer() {
 
   return function (): TokenManager {
     if (!accessManagerSingleton) {
-      const fiveMinutesInSeconds = 60 * 5;
       accessManagerSingleton = new TokenManager(
         process.env.JWT_ACCESS_SECRET as string,
-        fiveMinutesInSeconds,
+        ACCESS_EXPIRES_IN_SEC
       );
       return accessManagerSingleton;
     }
@@ -42,10 +47,9 @@ export const buildRefreshManager = (function initializer() {
 
   return function (): TokenManager {
     if (!refreshManagerSingleton) {
-      const oneDayInSeconds = 60 * 60 * 24;
       refreshManagerSingleton = new TokenManager(
         process.env.JWT_REFRESH_SECRET as string,
-        oneDayInSeconds,
+        REFRESH_EXPIRES_IN_S
       );
       return refreshManagerSingleton;
     }
@@ -59,7 +63,7 @@ export const buildRefreshStorage = (function initializer() {
 
   return function (): RefreshStorage {
     if (!refreshStorageSingleton) {
-      refreshStorageSingleton = new RefreshStorage();
+      refreshStorageSingleton = new RefreshStorage(REFRESH_EXPIRES_IN_MS);
     }
 
     return refreshStorageSingleton;
@@ -71,7 +75,7 @@ export const buildRefreshRepository = (function initializer() {
 
   return function (): RefreshRepository {
     if (!refreshRepositorySingleton) {
-      refreshRepositorySingleton = new RefreshRepository();
+      refreshRepositorySingleton = new RefreshRepository(REFRESH_EXPIRES_IN_MS, REFRESH_INTERVAL_TO_CLEAR_DB_IN_MS)
       return refreshRepositorySingleton;
     }
 

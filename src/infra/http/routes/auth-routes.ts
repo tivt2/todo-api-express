@@ -156,7 +156,7 @@ export const refreshRoute =
     const refreshToken = req.cookies.refreshToken;
 
     try {
-      const stored = refreshStorage.getToken(userId);
+      const stored = refreshStorage.removeToken(userId);
       if (!stored) {
         res.status(403);
         res.json({ message: 'Invalid token' });
@@ -179,7 +179,6 @@ export const refreshRoute =
         return;
       }
 
-      //needs sometype of buffer to deal with high rate insert to DB
       await refreshRepository.insertToken(
         userId,
         stored.token,
@@ -191,13 +190,13 @@ export const refreshRoute =
         token: newRefreshToken,
         createdAt: new Date(),
       });
-
       const newAccessToken = await accessManager.generate(userId);
 
       res.status(200);
       res.cookie('refreshToken', newRefreshToken, { httpOnly: true });
       res.json({ accessToken: newAccessToken });
     } catch (err) {
+      console.log(err)
       res.status(500);
       res.json({
         message: 'Something wrong happen, please try again in a moment',
