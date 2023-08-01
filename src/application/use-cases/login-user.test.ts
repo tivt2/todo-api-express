@@ -10,7 +10,7 @@ function makeSut() {
   const userRepoSpy = new UserRepositorySpy();
   const accessTokenManagerSpy = new TokenManagerSpy();
   const refreshTokenManagerSpy = new TokenManagerSpy();
-  const refreshStorage = new RefreshStorage();
+  const refreshStorage = new RefreshStorage(1000);
   const passwordEncrypterSpy = new PasswordEncrypterSpy();
 
   const sut = new LoginUser(

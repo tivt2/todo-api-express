@@ -1,9 +1,19 @@
-import { eq } from "drizzle-orm";
-import { TTodo } from "../../../../../domain/entity/todo";
-import db from "../../db";
-import { todosSchema } from "../../models/todos-model";
+import { eq } from 'drizzle-orm';
+import { TTodo } from '../../../../../domain/entity/todo';
+import db from '../../db';
+import { todosSchema } from '../../models/todos-model';
+import { TUser } from '../../../../../domain/entity/user';
 
-export async function findManyTodos(userId: string): Promise<TTodo[] | undefined> {
-  const todos = await db.query.todosSchema.findMany({where: eq(todosSchema.userId, userId)})
-  return todos
+type TUserWithTodos = TUser & { todos: TTodo[] };
+
+export async function findManyTodosWithUser(
+  userId: string,
+): Promise<TUserWithTodos | undefined> {
+  const [userWithTodos] = await db.query.usersSchema.findMany({
+    where: eq(todosSchema.id, userId),
+    with: {
+      todos: true,
+    },
+  });
+  return userWithTodos;
 }

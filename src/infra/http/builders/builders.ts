@@ -1,17 +1,23 @@
+import { CreateNewTodo } from '../../../application/use-cases/create-new-todo';
+import { DeleteTodo } from '../../../application/use-cases/delete-todo';
+import { EditTodo } from '../../../application/use-cases/edit-todo';
 import { LoginUser } from '../../../application/use-cases/login-user';
+import { MoveTodo } from '../../../application/use-cases/move-todo';
 import { RegisterNewUser } from '../../../application/use-cases/register-new-user';
+import { TodoList } from '../../../application/use-cases/todo-list';
 import { RefreshRepository } from '../../db/refresh-repository';
+import { TodoRepository } from '../../db/todo-repository';
 import { UserRepository } from '../../db/user-repository';
 import { PasswordEncrypter } from '../../utils/password-encrypter';
 import { RefreshStorage } from '../../utils/refresh-storage';
 import { TokenManager } from '../../utils/token-manager';
 import { UserInputValidator } from '../../utils/user-input-validator';
 
-const ACCESS_EXPIRES_IN_SEC = 60 * 5 // FIVE MINUTES IN SECONDS
+const ACCESS_EXPIRES_IN_SEC = 60 * 5; // FIVE MINUTES IN SECONDS
 
-const REFRESH_EXPIRES_IN_S = 60 * 60 * 24 // ONE DAY IN SECONDS
-const REFRESH_EXPIRES_IN_MS = REFRESH_EXPIRES_IN_S * 1000 // ONE DAY IN MILLISECONDS
-const REFRESH_INTERVAL_TO_CLEAR_DB_IN_MS = 1000 * 60 * 60 // ONE HOUR IN MILLISECONDS
+const REFRESH_EXPIRES_IN_S = 60 * 60 * 24; // ONE DAY IN SECONDS
+const REFRESH_EXPIRES_IN_MS = REFRESH_EXPIRES_IN_S * 1000; // ONE DAY IN MILLISECONDS
+const REFRESH_INTERVAL_TO_CLEAR_DB_IN_MS = 1000 * 60 * 60; // ONE HOUR IN MILLISECONDS
 
 export const buildUserInputValidator = (function initializer() {
   let userInputValidator: UserInputValidator | undefined;
@@ -33,7 +39,7 @@ export const buildAccessManager = (function initializer() {
     if (!accessManagerSingleton) {
       accessManagerSingleton = new TokenManager(
         process.env.JWT_ACCESS_SECRET as string,
-        ACCESS_EXPIRES_IN_SEC
+        ACCESS_EXPIRES_IN_SEC,
       );
       return accessManagerSingleton;
     }
@@ -49,7 +55,7 @@ export const buildRefreshManager = (function initializer() {
     if (!refreshManagerSingleton) {
       refreshManagerSingleton = new TokenManager(
         process.env.JWT_REFRESH_SECRET as string,
-        REFRESH_EXPIRES_IN_S
+        REFRESH_EXPIRES_IN_S,
       );
       return refreshManagerSingleton;
     }
@@ -75,7 +81,10 @@ export const buildRefreshRepository = (function initializer() {
 
   return function (): RefreshRepository {
     if (!refreshRepositorySingleton) {
-      refreshRepositorySingleton = new RefreshRepository(REFRESH_EXPIRES_IN_MS, REFRESH_INTERVAL_TO_CLEAR_DB_IN_MS)
+      refreshRepositorySingleton = new RefreshRepository(
+        REFRESH_EXPIRES_IN_MS,
+        REFRESH_INTERVAL_TO_CLEAR_DB_IN_MS,
+      );
       return refreshRepositorySingleton;
     }
 
@@ -141,5 +150,83 @@ export const buildRegisterNewUser = (function initializer() {
     }
 
     return registerNewUserSingleton;
+  };
+})();
+
+export const buildTodoRepository = (function initializer() {
+  let todoRepositorySingleton: TodoRepository | undefined;
+
+  return function (): TodoRepository {
+    if (!todoRepositorySingleton) {
+      todoRepositorySingleton = new TodoRepository();
+      return todoRepositorySingleton;
+    }
+
+    return todoRepositorySingleton;
+  };
+})();
+
+export const buildTodoList = (function initializer() {
+  let todoListSingleton: TodoList | undefined;
+
+  return function (): TodoList {
+    if (!todoListSingleton) {
+      todoListSingleton = new TodoList(buildTodoRepository());
+      return todoListSingleton;
+    }
+
+    return todoListSingleton;
+  };
+})();
+
+export const buildCreateNewTodo = (function initializer() {
+  let createNewTodoSingleton: CreateNewTodo | undefined;
+
+  return function (): CreateNewTodo {
+    if (!createNewTodoSingleton) {
+      createNewTodoSingleton = new CreateNewTodo(buildTodoRepository());
+      return createNewTodoSingleton;
+    }
+
+    return createNewTodoSingleton;
+  };
+})();
+
+export const buildEditTodo = (function initializer() {
+  let editTodoSingleton: EditTodo | undefined;
+
+  return function (): EditTodo {
+    if (!editTodoSingleton) {
+      editTodoSingleton = new EditTodo(buildTodoRepository());
+      return editTodoSingleton;
+    }
+
+    return editTodoSingleton;
+  };
+})();
+
+export const buildMoveTodo = (function initializer() {
+  let moveTodoSingleton: MoveTodo | undefined;
+
+  return function (): MoveTodo {
+    if (!moveTodoSingleton) {
+      moveTodoSingleton = new MoveTodo(buildTodoRepository());
+      return moveTodoSingleton;
+    }
+
+    return moveTodoSingleton;
+  };
+})();
+
+export const buildDeleteTodo = (function initializer() {
+  let deleteTodoSingleton: DeleteTodo | undefined;
+
+  return function (): DeleteTodo {
+    if (!deleteTodoSingleton) {
+      deleteTodoSingleton = new DeleteTodo(buildTodoRepository());
+      return deleteTodoSingleton;
+    }
+
+    return deleteTodoSingleton;
   };
 })();
