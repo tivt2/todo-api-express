@@ -1,6 +1,6 @@
-import { TRefresh } from '../../../../domain/entity/refresh';
-import db from '../db';
-import { refreshSchema } from '../models/refresh-model';
+import { TRefresh } from '../../../../../domain/entity/refresh';
+import db from '../../db';
+import { refreshSchema } from '../../models/refresh-model';
 
 export async function insertRefreshToken(refreshToken: {
   userId: string;

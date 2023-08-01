@@ -13,8 +13,8 @@ export const todosSchema = pgTable('todos', {
   userId: uuid('userId').notNull(),
   content: varchar('content').notNull(),
   completed: boolean('completed').notNull(),
-  createdAt: timestamp('createdAt').defaultNow(),
-  updatedAt: timestamp('updatedAt').defaultNow(),
+  createdAt: timestamp('createdAt').defaultNow().notNull(),
+  updatedAt: timestamp('updatedAt').defaultNow().notNull(),
 });
 
 export const todosRelations = relations(todosSchema, ({ one }) => ({

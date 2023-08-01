@@ -8,6 +8,13 @@
       "when": 1690854871043,
       "tag": "0000_mysterious_blob",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1690915956797,
+      "tag": "0001_slimy_ego",
+      "breakpoints": true
     }
   ]
 }

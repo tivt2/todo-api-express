@@ -2,8 +2,8 @@ import { TUser } from '../../domain/entity/user';
 import { IUserRepository } from '../../domain/interface/user-respository-interface';
 import { NewUserError } from '../errors/new-user-error';
 import { UserNotFoundError } from '../errors/user-not-found-error';
-import { findFirstUserByUsername } from './drizzle/queries/findFirstUserByUsername';
-import { insertUser } from './drizzle/queries/insertUser';
+import { findFirstUserByUsername } from './drizzle/queries/users/findFirstUserByUsername';
+import { insertUser } from './drizzle/queries/users/insertUser';
 
 export class UserRepository implements IUserRepository {
   async createUser(username: string, password: string): Promise<TUser> {

@@ -2,9 +2,9 @@ import { TRefresh } from '../../domain/entity/refresh';
 import { IRefreshRepository } from '../../domain/interface/refresh-repository-interface';
 import { InsertRefreshError } from '../errors/insert-refresh-error';
 import { RefreshNotFoundError } from '../errors/refresh-not-found-error';
-import { deleteOldTokens } from './drizzle/queries/deleteOldTokens';
-import { findFirstRefreshToken } from './drizzle/queries/findFirstRefreshToken';
-import { insertRefreshToken } from './drizzle/queries/insertRefreshToken';
+import { deleteOldTokens } from './drizzle/queries/refresh/deleteOldTokens';
+import { findFirstRefreshToken } from './drizzle/queries/refresh/findFirstRefreshToken';
+import { insertRefreshToken } from './drizzle/queries/refresh/insertRefreshToken';
 
 export class RefreshRepository implements IRefreshRepository {
   private deleteInterval;

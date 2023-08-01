@@ -1,6 +1,6 @@
-import { TUser } from '../../../../domain/entity/user';
-import db from '../db';
-import { usersSchema } from '../models/users-model';
+import { TUser } from '../../../../../domain/entity/user';
+import db from '../../db';
+import { usersSchema } from '../../models/users-model';
 
 export async function insertUser(newUser: {
   username: string;

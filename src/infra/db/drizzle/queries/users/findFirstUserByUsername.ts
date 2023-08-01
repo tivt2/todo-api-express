@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
-import { TUser } from '../../../../domain/entity/user';
-import db from '../db';
-import { usersSchema } from '../models/users-model';
+import { TUser } from '../../../../../domain/entity/user';
+import db from '../../db';
+import { usersSchema } from '../../models/users-model';
 
 export function findFirstUserByUsername(
   username: string,

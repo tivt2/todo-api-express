@@ -1,7 +1,7 @@
 import { and, eq } from 'drizzle-orm';
-import { TRefresh } from '../../../../domain/entity/refresh';
-import db from '../db';
-import { refreshSchema } from '../models/refresh-model';
+import { TRefresh } from '../../../../../domain/entity/refresh';
+import db from '../../db';
+import { refreshSchema } from '../../models/refresh-model';
 
 export async function findFirstRefreshToken(
   userId: string,
