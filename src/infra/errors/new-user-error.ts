@@ -1,5 +1,5 @@
 export class NewUserError extends Error {
   constructor() {
-    super("Couldn't create a new user");
+    super("Couldn't create new user");
   }
 }

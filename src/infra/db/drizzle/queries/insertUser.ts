@@ -7,6 +7,6 @@ export async function insertUser(newUser: {
   password: string;
   todosOrder: string[];
 }): Promise<TUser | undefined> {
-  const [user, ..._] = await db.insert(usersSchema).values(newUser).returning();
+  const [user] = await db.insert(usersSchema).values(newUser).returning();
   return user;
 }

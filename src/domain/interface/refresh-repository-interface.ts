@@ -1,7 +1,11 @@
 import { TRefresh } from '../entity/refresh';
 
 export interface IRefreshRepository {
-  insertToken(key: string, token: string): Promise<TRefresh>;
-  findToken(key: string, token: string): Promise<TRefresh>;
+  insertToken(
+    userId: string,
+    token: string,
+    createdAt: Date,
+  ): Promise<TRefresh>;
+  findToken(userId: string, token: string): Promise<TRefresh>;
   clearInvalid(olderThan: number): Promise<void>;
 }

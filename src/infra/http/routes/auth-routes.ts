@@ -7,6 +7,8 @@ import { UserInputValidator } from '../../utils/user-input-validator';
 import { RefreshRepository } from '../../db/refresh-repository';
 import { RefreshStorage } from '../../utils/refresh-storage';
 import { TokenManager } from '../../utils/token-manager';
+import { NewUserError } from '../../errors/new-user-error';
+import { RefreshNotFoundError } from '../../errors/refresh-not-found-error';
 
 export function loginRoute(
   userInputValidator: UserInputValidator,
@@ -82,11 +84,22 @@ export function logoutRoute(
         return;
       }
 
-      await refreshRepository.insertToken(userId, refreshToken);
+      await refreshRepository.insertToken(
+        userId,
+        stored.token,
+        stored.createdAt,
+      );
 
       res.status(200);
       res.json({ message: 'See you next time' });
     } catch (err) {
+      if (err instanceof RefreshNotFoundError) {
+        res.status(500);
+        res.json({
+          message: 'Something wrong happen, please try again in a moment',
+        });
+        return;
+      }
       res.status(500);
       res.json({
         message: 'Something wrong happen, please try again in a moment',
@@ -116,6 +129,13 @@ export const registerRoute =
       res.json({ message: `Welcome ${user.username}, enjoy` });
       return res;
     } catch (err) {
+      if (err instanceof NewUserError) {
+        res.status(500);
+        res.json({
+          message: 'Could not create user, try again in a few moments',
+        });
+        return;
+      }
       res.status(500);
       res.json({
         message: 'Something wrong happen, please try again in a moment',
@@ -160,7 +180,11 @@ export const refreshRoute =
       }
 
       //needs sometype of buffer to deal with high rate insert to DB
-      await refreshRepository.insertToken(userId, refreshToken);
+      await refreshRepository.insertToken(
+        userId,
+        stored.token,
+        stored.createdAt,
+      );
 
       const newRefreshToken = await refreshManager.generate(userId);
       refreshStorage.setToken(userId, {

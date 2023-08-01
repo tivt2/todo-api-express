@@ -11,6 +11,7 @@ export class UserRepository implements IUserRepository {
     if (!newUser) {
       throw new NewUserError();
     }
+
     return newUser;
   }
 
