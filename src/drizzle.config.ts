@@ -3,8 +3,8 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export default {
-  schema: './src/infra/db/drizzle/models/*',
-  out: './drizzle-migrations',
+  schema: './infra/db/drizzle/models/*',
+  out: '../drizzle-migrations',
   driver: 'pg',
   dbCredentials: {
     connectionString: process.env.DATABASE_URL,
