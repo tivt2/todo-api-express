@@ -1,10 +1,7 @@
-import { TRefreshStorageValue } from '../entity/refresh-storage-value';
+export type TRefreshStorage = { token: string; createdAt: Date };
 
 export interface IRefreshStorage {
-  setToken(
-    key: string,
-    value: TRefreshStorageValue,
-  ): TRefreshStorageValue | undefined;
-  getToken(key: string): TRefreshStorageValue | undefined;
-  removeToken(key: string): TRefreshStorageValue | undefined;
+  setToken(key: string, value: TRefreshStorage): TRefreshStorage | undefined;
+  getToken(key: string): TRefreshStorage | undefined;
+  removeToken(key: string): TRefreshStorage | undefined;
 }
