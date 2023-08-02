@@ -91,6 +91,7 @@ export function logoutRoute(
       );
 
       res.status(200);
+      res.cookie('refreshToken', '', { expires: new Date(0), httpOnly: true });
       res.json({ message: 'See you next time' });
     } catch (err) {
       if (err instanceof RefreshNotFoundError) {
@@ -196,7 +197,7 @@ export const refreshRoute =
       res.cookie('refreshToken', newRefreshToken, { httpOnly: true });
       res.json({ accessToken: newAccessToken });
     } catch (err) {
-      console.log(err)
+      console.log(err);
       res.status(500);
       res.json({
         message: 'Something wrong happen, please try again in a moment',
